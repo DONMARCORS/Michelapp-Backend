@@ -9,7 +9,7 @@ sys.path.insert(0, parent_dir)
 from app.db.init_db import init_db
 from app.db.session import SessionLocal
 
-logging.basicConfig(level=logging.INFO)
+logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 

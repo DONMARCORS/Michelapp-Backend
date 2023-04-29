@@ -3,7 +3,6 @@ import logging
 from typing import Any
 from fastapi import APIRouter, Body, Depends, HTTPException
 from fastapi.security import OAuth2PasswordRequestForm
-from pydantic import ValidationError
 from sqlalchemy.orm.session import Session
 
 
@@ -61,6 +60,8 @@ def create_user_signup(
     user = crud.user.get_by_email(db, email=user_in.email)
     if user:
         raise HTTPException(status_code=400, detail="Email already registered")
+    if user_in.privilege != 3:
+        raise HTTPException(status_code=400, detail="Cannot create user with privilege other than client")
     
     user = crud.user.create(db, obj_in=user_in)
     return user
@@ -72,7 +73,7 @@ def read_users_me(
     current_user: User = Depends(deps.get_current_user),
 ) -> Any:
     """
-    Get current user.
+    Get current user info
     """
     logger.info("Getting current user")
     return current_user

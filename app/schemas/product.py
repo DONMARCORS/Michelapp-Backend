@@ -4,14 +4,15 @@ from pydantic import BaseModel, EmailStr
 
 
 
-class ProductoBase(BaseModel):
+class ProductBase(BaseModel):
+    id: Optional[int] = None
     name: Optional[str]
     quantity: Optional[int]
     price: Optional[int]
 
 
 # Properties to recieve via API on creation
-class ProductoCreate(ProductoBase):
+class ProductCreate(ProductBase):
     name: Optional[str]
     quantity: Optional[int]
     description: Optional[str]
@@ -19,27 +20,27 @@ class ProductoCreate(ProductoBase):
 
 
 # Properties to recieve via API on update
-class ProductoUpdate(ProductoBase):
+class ProductUpdate(ProductBase):
     name: Optional[str]
     quantity: Optional[int]
     description: Optional[str]
     price: Optional[int]
 
 
-class ProductoInDBBase(ProductoBase):
+class ProductInDBBase(ProductBase):
     id: Optional[int] = None
 
     class Config:
-        orm_mode = True
+        orm_mode = True # This will allow us to use the class as a Pydantic model
 
 # Additional properties to return via API
-class Producto(ProductoInDBBase):
+class Product(ProductInDBBase):
     ...
 
 
 # Additional preoperties stored in DB but not returned by APi
-class ProductoInDB(ProductoInDBBase):
+class ProductInDB(ProductInDBBase):
     ...
 
-class ProductoSearchResults(ProductoInDBBase):
-    results: List[Producto]
+class ProductSearchResults(ProductInDBBase):
+    results: List[Product]

@@ -43,5 +43,5 @@ class User(UserInDBBase):
 
 
 # Admin can search users
-class UserSearchResults(UserInDBBase):
+class UserSearchResults(BaseModel):
     results: Sequence[User]

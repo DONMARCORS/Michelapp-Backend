@@ -36,8 +36,10 @@ class Settings(BaseSettings):
     
     SQLALCHEMY_DATABASE_URI: Optional[str] = os.getenv("SQLALCHEMY_DATABASE_URI")
     FIRST_SUPERUSER: EmailStr = os.getenv("FIRST_SUPERUSER")
+    FIRST_CLIENT: EmailStr = os.getenv("FIRST_CLIENT")
     
     FIRST_SUPERUSER_PASSWORD: str = os.getenv("FIRST_SUPERUSER_PASSWORD")
+    FIRST_CLIENT_PASSWORD: str = os.getenv("FIRST_CLIENT_PASSWORD")
 
     class Config:
         case_sensitive = True

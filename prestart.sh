@@ -4,7 +4,7 @@ rm -rf ./alembic/versions/__pycache__
 
 
 # Let the DB start
-python ./app/backend_prestart.py
+python3 ./app/backend_prestart.py
 
 # Run migrations
 
@@ -14,4 +14,4 @@ alembic upgrade head
 
 
 # Create initial data in DB
-python ./app/initial_data.py
+python3 ./app/initial_data.py

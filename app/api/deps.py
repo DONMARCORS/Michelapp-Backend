@@ -53,22 +53,4 @@ async def get_current_user(
     if user is None:
         raise credentials_exception
     #db.current_user_id = user.id copilot suggestion
-    return user 
-
-def current_user_is_admin_or_vendedor(
-    current_user: User = Depends(get_current_user),
-) -> User:
-    if not crud.user.is_admin(current_user) and not crud.user.is_vendedor(current_user):
-        raise HTTPException(
-            status_code=400, detail="The user doesn't have enough privileges"
-        )
-    return current_user
-
-def current_user_is_admin(
-    current_user: User = Depends(get_current_user),
-) -> User:
-    if not crud.user.is_admin(current_user):
-        raise HTTPException(
-            status_code=400, detail="The user doesn't have enough privileges"
-        )
-    return current_user
+    return user
