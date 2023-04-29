@@ -36,10 +36,12 @@ Modificar las variables de entorno en el archivo .env
 (.venv) $ sh prestart.sh
 ```
 
-### Correr servidor
+### Ejecutar servidor
 ```bash
 (.venv) $ sh run.sh
 ```
+
+Una vez ejecutado el servidor, se puede acceder a la documentación en los siguientes links:
 
 ## Documentación
 
