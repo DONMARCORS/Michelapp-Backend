@@ -14,10 +14,9 @@ from app.schemas.user import (
 )
 
 router = APIRouter()
-RECIPE_SUBREDDITS = ["recipes", "easyrecipes", "TopSecretRecipes"]
 
 @router.get("/search/", status_code=200, response_model=UserSearchResults)
-def search_recipes(
+def search_users(
     *,
     keyword: str = Query(None, min_length=3, example="alex"),
     max_results: Optional[int] = 10,
@@ -32,7 +31,7 @@ def search_recipes(
     return {"results": list(results)}
 
 @router.get("/vendedores", status_code=200, response_model=UserSearchResults)
-def search_recipes(
+def search_vendedores(
     *,
     max_results: Optional[int] = 10,
     db: Session = Depends(deps.get_db),
@@ -41,13 +40,13 @@ def search_recipes(
     """
     Search for users based on label keyword
     """
-    users = crud.recipe.get_multi(db=db, limit=max_results)
+    users = crud.user.get_multi(db=db, limit=max_results)
     results = filter(lambda user: 2 == user.privilege, users)
 
     return {"results": list(results)}
 
-@router.get("/usuarios", status_code=200, response_model=UserSearchResults)
-def search_recipes(
+@router.get("/clientes", status_code=200, response_model=UserSearchResults)
+def search_clientes(
     *,
     max_results: Optional[int] = 10,
     db: Session = Depends(deps.get_db),
@@ -56,7 +55,7 @@ def search_recipes(
     """
     Search for users based on label keyword
     """
-    users = crud.recipe.get_multi(db=db, limit=max_results)
+    users = crud.user.get_multi(db=db, limit=max_results)
     results = filter(lambda user: 3 == user.privilege, users)
 
     return {"results": list(results)}
