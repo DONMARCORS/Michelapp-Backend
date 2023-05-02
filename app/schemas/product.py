@@ -18,7 +18,7 @@ class ProductCreate(ProductBase):
 
 # Properties to recieve via API on update
 class ProductUpdate(ProductBase):
-    ...
+    id: int
 
 class ProductInDBBase(ProductBase):
     id: Optional[int] = None
