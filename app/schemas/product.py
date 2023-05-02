@@ -1,31 +1,24 @@
-from typing import Optional, List
+from typing import Optional, Sequence
 
-from pydantic import BaseModel, EmailStr
-
-
+from pydantic import BaseModel
 
 class ProductBase(BaseModel):
-    id: Optional[int] = None
     name: Optional[str]
     quantity: Optional[int]
+    description: Optional[str]
     price: Optional[int]
 
 
 # Properties to recieve via API on creation
 class ProductCreate(ProductBase):
-    name: Optional[str]
-    quantity: Optional[int]
-    description: Optional[str]
-    price: Optional[int]
-
+    name: str
+    quantity: int
+    description: str
+    price: int
 
 # Properties to recieve via API on update
 class ProductUpdate(ProductBase):
-    name: Optional[str]
-    quantity: Optional[int]
-    description: Optional[str]
-    price: Optional[int]
-
+    ...
 
 class ProductInDBBase(ProductBase):
     id: Optional[int] = None
@@ -37,10 +30,9 @@ class ProductInDBBase(ProductBase):
 class Product(ProductInDBBase):
     ...
 
-
 # Additional preoperties stored in DB but not returned by APi
 class ProductInDB(ProductInDBBase):
     ...
 
-class ProductSearchResults(ProductInDBBase):
-    results: List[Product]
+class ProductSearchResults(BaseModel):
+    results: Sequence[Product]

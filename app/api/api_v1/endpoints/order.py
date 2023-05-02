@@ -22,7 +22,7 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-@router.get("/all-orders", status_code=200, response_model=OrderSearchResults)
+@router.get("/all", status_code=200, response_model=OrderSearchResults)
 def get_all_orders(
     *,
     db: Session = Depends(deps.get_db),
@@ -46,7 +46,7 @@ def get_all_orders(
     return {"results": list(results)}
 
 
-@router.get("/{order_id}", status_code=200, response_model=Order)
+@router.get("/all/{order_id}", status_code=200, response_model=Order)
 def get_order_by_id(
     *,
     order_id: int,
@@ -115,7 +115,7 @@ def create_order(
     current_user: User = Depends(deps.get_current_user),
 ) -> Order:
     """
-    Create a new order in the database.
+    Create a new order in the database. Used by client
     """
     
     if order_in.owner_id != current_user.id:
@@ -148,6 +148,7 @@ def create_order(
         crud.product.update(db=db, db_obj=product, obj_in=product_in)
 
     return order
+
 
 
 @router.put("/", status_code=201, response_model=Order)
@@ -211,3 +212,31 @@ def delete_order(
         )
     order = crud.order.remove(db=db, id=order_id)
     return order
+
+
+
+@router.get("/active-order", status_code=200, response_model=Order)
+def get_active_order(
+    *,
+    current_user: User = Depends(deps.get_current_user),
+) -> dict:
+    """
+    Get the active order for the current user
+    """
+
+    orders = current_user.orders
+
+    if not orders:
+        raise HTTPException(
+            status_code=404,
+            detail="No active order found",
+        )
+
+    for order in orders:
+        if order.status == "pending":
+            return order
+
+    raise HTTPException(
+        status_code=404,
+        detail="No active order found",
+    )

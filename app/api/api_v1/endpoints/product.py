@@ -1,16 +1,10 @@
 import logging
 
-from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi import APIRouter
 
-from app import crud
-from app.api import deps
 from app.schemas.product import (
-    Product,
-    ProductCreate,
-    ProductUpdate,
     ProductSearchResults
 )
-from app.models.user import User
 
 router = APIRouter()
 
