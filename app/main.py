@@ -21,6 +21,16 @@ logger = logging.getLogger(__name__)
 root_router = APIRouter()
 app = FastAPI(title="Michelapp API", openapi_url=f"{settings.API_V1_STR}/openapi.json")
 
+# Set all CORS enabled origins
+if settings.BACKEND_CORS_ORIGINS:
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=[str(origin) for origin in settings.BACKEND_CORS_ORIGINS],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
 @root_router.get("/", status_code=200)
 def root() -> dict:
     """

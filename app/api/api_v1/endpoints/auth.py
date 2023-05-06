@@ -27,6 +27,8 @@ def login(
     Get the JWT for a user with data from OAuth2 request form body
     """
     logger.info("User logging in")
+    logger.debug(form_data.username)
+    logger.debug(form_data.password)
     user = authenticate(email=form_data.username, password=form_data.password, db=db)
 
     if not user:
