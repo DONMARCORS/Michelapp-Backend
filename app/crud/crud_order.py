@@ -1,3 +1,5 @@
+import datetime
+
 from sqlalchemy.orm import Session
 from app.crud.base import CRUDBase
 from app.models.order import Order
@@ -7,9 +9,14 @@ from app.schemas.order import OrderCreate, OrderUpdate
 
 class CRUDOrder(CRUDBase[Order, OrderCreate, OrderUpdate]):
     def create(self, db: Session, *, order_in: OrderCreate) -> Order:
+        # take datetime and add to created_at
+        created_at = datetime.datetime.now()
+
+
         order = Order(
             status=order_in.status,
-            owner_id=order_in.owner_id
+            owner_id=order_in.owner_id,
+            created_at=created_at
         )
         db.add(order)
         db.commit()

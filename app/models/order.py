@@ -13,6 +13,7 @@ class Order(Base):
         back_populates="order",
         uselist=True, # We set this to True because we want to have a list of order_items
     )
+    created_at = Column(String(256), nullable=False)
 
     owner_id = Column(Integer, ForeignKey("user.id"), nullable=False, unique=False)
     owner = relationship(

@@ -9,6 +9,7 @@ from app.schemas.order_item import OrderItem, OrderItemCreate
 class OrderBase(BaseModel):
     status: Optional[Literal["pending", "completed", "cancelled"]] = None
     owner_id: Optional[int] = None
+    created_at: Optional[str] = None
 
 # Properties to recieve via API on creation
 class OrderCreate(OrderBase):
