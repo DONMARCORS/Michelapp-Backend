@@ -7,19 +7,20 @@ from app.schemas.order_item import OrderItem, OrderItemCreate
 
 
 class OrderBase(BaseModel):
-    status: Optional[Literal["pending", "completed", "cancelled"]] = None
+    status: Optional[Literal["realizado", "aceptado", "proceso", "enviado", "entregado", "cancelado"]] = None
     owner_id: Optional[int] = None
     created_at: Optional[str] = None
 
 # Properties to recieve via API on creation
 class OrderCreate(OrderBase):
-    status: Literal["pending", "completed", "cancelled"]
+    status: Literal["realizado", "aceptado", "proceso", "enviado", "entregado", "cancelado"]
     owner_id: int
     order_items: List[OrderItemCreate] = []
 
 # Properties to recieve via API on update
 class OrderUpdate(OrderBase):
-    id: int
+    status: Literal["realizado", "aceptado", "proceso", "enviado", "entregado", "cancelado"]
+
 
 
 class OrderInDBBase(OrderBase):

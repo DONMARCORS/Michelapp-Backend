@@ -51,9 +51,6 @@ http://localhost:8001/docs
 ### Redoc
 http://localhost:8001/redoc
 
-### OpenAPI
-http://localhost:8001/openapi.json
-
 
 
 

@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 ORDERS = [
     {
-        "status": "pending",
+        "status": "proceso",
         "owner_id": 2,
         "order_items": [
             {
@@ -149,3 +149,24 @@ def init_db(db: Session) -> None:
                 order_items=order["order_items"],
             )
             crud.order.create(db=db, order_in=order_in)
+    
+    if settings.FIRST_VENDOR:
+        user = crud.user.get_by_email(db, email= settings.FIRST_VENDOR)
+
+        if not user:
+            user_in = schemas.UserCreate(
+                first_name="Vendedor", 
+                last_name="Hernandez",
+                email=settings.FIRST_VENDOR,
+                password=settings.FIRST_VENDOR_PASSWORD,
+                #birthday is a Date object
+                birthday=date(1990, 1, 1),
+                privilege=2, # 1: ADMIN, 2: VENDEDOR, 3: CLIENTE
+            )
+            user = crud.user.create(db, obj_in=user_in)
+        else:
+            logger.warning(
+                "Client already exists in the database. Skipping creation."
+                f"Email: {settings.FIRST_CLIENT} already exists in the database."
+            )
+        logger.debug(f"Created client {user.id}")
