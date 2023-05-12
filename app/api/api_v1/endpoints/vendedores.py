@@ -11,6 +11,7 @@ from app.api import deps
 from app.schemas.user import (
     User,
     UserSearchResults,
+    UserUpdate
 )
 
 router = APIRouter()
@@ -44,5 +45,30 @@ def get_vendedores(
     
     return {"results": vendors}
 
+
+@router.put("/{user_id}", status_code=200, response_model=User)
+def update_vendedor(
+    *,
+    user_id: int,
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user),
+    user_in: UserUpdate,
+    
+ ) -> dict:
+    """
+    Update vendedor
+    """
+
+    if current_user.privilege != 1:
+        raise authorization_exception
+
+    user = crud.user.get(db, id=user_id)
+
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    user = crud.user.update(db, db_obj=user, obj_in=user_in)
+
+    return user
 
 

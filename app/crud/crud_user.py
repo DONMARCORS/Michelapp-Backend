@@ -34,6 +34,15 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         else:
             update_data = obj_in.dict(exclude_unset=True) # If obj_in is a UserUpdate object, we do this to avoid the error
 
+
+        # We check if the password is being updated
+        if "password" in update_data:
+            password = update_data["password"]
+            hashed_password = get_password_hash(password)
+            update_data["hashed_password"] = hashed_password
+            del update_data["password"]
+
+            
         return super().update(db, db_obj=db_obj, obj_in=update_data)
     
     def is_vendedor(self, user: User) -> bool:

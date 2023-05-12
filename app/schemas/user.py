@@ -9,7 +9,7 @@ class UserBase(BaseModel):
     last_name: Optional[str]
     email: Optional[EmailStr] = None
     birthday: Optional[date] = None
-    privilege: conint(ge=1, le=3)# 1: ADMIN, 2: VENDEDOR, 3: CLIENTE
+    privilege: Optional[conint(ge=1, le=3)]# 1: ADMIN, 2: VENDEDOR, 3: CLIENTE
 
 # Properties to recieve via API on creation
 class UserCreate(UserBase):
@@ -22,6 +22,7 @@ class UserCreate(UserBase):
 
 # Properties to recieve via API on update
 class UserUpdate(UserBase):
+    password: Optional[str] = None
     ...
 
 
