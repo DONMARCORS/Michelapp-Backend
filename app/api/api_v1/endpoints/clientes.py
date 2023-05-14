@@ -11,6 +11,7 @@ from app.api import deps
 from app.schemas.user import (
     User,
     UserSearchResults,
+    UserCreate
 )
 
 from sqlalchemy.orm import Session
@@ -30,6 +31,26 @@ def get_clientes() -> dict:
     """
 
     return {"results": []}
+
+
+# Caso de uso: Crear una cuenta del cliente
+@router.post("/", status_code=200, response_model=User)
+def create_cliente(
+    *,
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user),
+    user_in: UserCreate,
+
+) -> dict:
+    """
+    Create a client
+    """
+
+    if current_user.privilege != 3:
+        raise authorization_exception
+
+
+
 
 
 
