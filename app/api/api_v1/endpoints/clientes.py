@@ -33,13 +33,13 @@ def get_clientes() -> dict:
     return {"results": []}
 
 
-# Caso de uso: Crear una cuenta del cliente
-@router.post("/", status_code=200, response_model=User)
+# Caso de uso: Crear un cliente
+@router.post("/", status_code=201, response_model=User)
 def create_cliente(
     *,
     db: Session = Depends(deps.get_db),
     current_user: User = Depends(deps.get_current_user),
-    user_in: UserCreate,
+    user_in: UserCreate
 
 ) -> dict:
     """
@@ -49,7 +49,12 @@ def create_cliente(
     if current_user.privilege != 3:
         raise authorization_exception
 
+    client = crud.user.create(db, user_in)
 
+    if client is None:
+        raise HTTPException(status_code=400, detail="Client not created")
+    
+    return client
 
 
 
