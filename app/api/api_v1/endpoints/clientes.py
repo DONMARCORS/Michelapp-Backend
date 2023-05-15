@@ -16,7 +16,6 @@ from app import schemas
 from app.schemas.user import (
     User,
     UserSearchResults,
-    UserCreate
 )
 
 from sqlalchemy.orm import Session
@@ -114,6 +113,29 @@ def create_cliente(
     return client
     
 
+# Caso de uso: Borrar la cuenta del cliente
+@router.delete("/{client_id}", status_code=200, response_model=schemas.User, response_description="Client deleted")
+def delete_client(
+    *,
+    client_id: int,
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user),
+) -> dict:
+    """
+    Delete a client. Only clients can
+    """
+
+    if current_user.privilege != 3:
+        raise authorization_exception
+    
+    client = crud.user.get(db, id=client_id)
+
+    if client is None:
+        raise HTTPException(status_code=404, detail="Client not found")
+
+    client = crud.user.remove(db=db, id=client_id)
+
+    return client
 
 
 
