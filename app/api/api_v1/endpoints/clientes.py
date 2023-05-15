@@ -6,10 +6,7 @@
 from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, Body
 import logging
-import smtplib
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
-from email.message import EmailMessage
+import yagmail
 import random as rd
 import string
 
@@ -57,7 +54,7 @@ def get_clientes(
     return {"results": list_results}
 
 
-# Caso de uso: Crear un cliente
+# Caso de uso: Crear una cuenta para el cliente
 @router.post("/", status_code=201, response_model=schemas.User, response_description="Client created")
 def create_cliente(
     *,
@@ -67,7 +64,7 @@ def create_cliente(
         example={
             "first_name": "Israel",
             "last_name": "Hernandez",
-            "email": "hdisra@gmail.com",
+            "email": "hdisra318@ciencias.unam.mx",
             "birthday": "2023-05-15",
             "privilege": 3,
             "password": ""
@@ -88,35 +85,23 @@ def create_cliente(
     
     # Creando password y envio a correo del cliente (GMAIL)
     email_subject = "Contraseña generada por Michelapp"
-    dest_email_address = user_in.email
-    sender_email_address = "hdisra@gmail.com" # Crear correo para el sistema
-    email_smtp = "smtp.gmail.com"
-    email_password = "hdwjasdc" # Contrasena del correo del sistema
-
-    msg = MIMEMultipart()
-
-    # Email headers
-    msg['Subject'] = email_subject
-    msg['From'] = sender_email_address
-    msg['To'] = dest_email_address
+    sender_email_address = "michelappingsoft@gmail.com" # Correo para el sistema
+    email_password = "Ihebd837" # Contrasena del correo del sistema
+    password_aplicacion = 'eycooxfyrydhszmc' # Contrasena para el envio de correos GMAIL
 
     # Generando contrasena
     pwd = ""
     for c in range(0, 5):
         pwd += rd.choice(string.ascii_letters)
 
-    print(pwd)
-    '''
-    message = "Hola! Tu contraseña para entrar a Michelapp será: "+pwd
+    yag = yagmail.SMTP(user=sender_email_address, password=password_aplicacion)
 
-    msg.attach(MIMEText(message, 'plain'))
+    dest_email = [user_in.email]
+    titulo = '<h1>Hola! Aqui te enviamos la contraseña con la que puedes ingresar a Michelapp!</h1>'
+    cuerpo = '<p>Contraseña: '+pwd+'</p>'
 
-    server = smtplib.SMTP('smtp.gmail.com: 587')
-    server.starttls()
-    server.login(msg["From"], email_password)
-    server.sendmail(msg['From'], msg["To"], msg.as_string())
-    server.quit()
-    '''
+    yag.send(dest_email, email_subject, [titulo, cuerpo])
+
     # Asignando contrasena al cliente
     user_in.password = pwd
 
