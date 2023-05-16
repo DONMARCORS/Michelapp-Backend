@@ -9,6 +9,7 @@ import logging
 import yagmail
 import random as rd
 import string
+from app.core.security import verify_password
 
 from app import crud
 from app.api import deps
@@ -16,6 +17,7 @@ from app import schemas
 from app.schemas.user import (
     User,
     UserSearchResults,
+    UserUpdate
 )
 
 from sqlalchemy.orm import Session
@@ -114,10 +116,11 @@ def create_cliente(
     
 
 # Caso de uso: Borrar la cuenta del cliente
-@router.delete("/{client_id}", status_code=200, response_model=schemas.User, response_description="Client deleted")
+@router.delete("/{client_id}/{client_pwd}", status_code=200, response_model=schemas.User, response_description="Client deleted")
 def delete_client(
     *,
     client_id: int,
+    client_pwd: str,
     db: Session = Depends(deps.get_db),
     current_user: User = Depends(deps.get_current_user),
 ) -> dict:
@@ -128,14 +131,95 @@ def delete_client(
     if current_user.privilege != 3:
         raise authorization_exception
     
+    # Si el id no coincide
+    if current_user.id != client_id:
+        raise authorization_exception
+    
     client = crud.user.get(db, id=client_id)
-
+    
     if client is None:
         raise HTTPException(status_code=404, detail="Client not found")
+    
+    # Confirmando eliminacion con la contrasena
+    if not verify_password(client_pwd, client.hashed_password):
+        raise HTTPException(status_code=400, detail="Incorrect password")
 
     client = crud.user.remove(db=db, id=client_id)
 
     return client
 
 
+# Caso de uso: Actualizar la cuenta del cliente (Contrasena)
+@router.put("/{client_id}/{client_old_pwd}", status_code=200, response_model=schemas.User, response_description="Client's password updated")
+def update_client_pwd(
+    *,
+    client_id: int,
+    client_old_pwd: str,
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user),
+    user_in: UserUpdate = Body(
+        ...,
+        example={
+            "password": ""
+        }
+    ),
+) -> dict:
+    
+    """
+    Updates client's password
+    """
 
+    if current_user.privilege != 3:
+        raise authorization_exception
+    
+    # Si el id no coincide
+    if current_user.id != client_id:
+        raise authorization_exception
+    
+    client = crud.user.get(db, id=client_id)
+
+    if client is None:
+        raise HTTPException(status_code=404, detail="Client not found")
+    
+    if not verify_password(client_old_pwd, client.hashed_password):
+        raise HTTPException(status_code=400, detail="Incorrect password")
+
+    client = crud.user.update(db, db_obj=client, obj_in=user_in)
+
+    return client
+
+
+# Caso de uso: Actualizar la cuenta del cliente (Correo)
+@router.put("/{client_id}", status_code=200, response_model=schemas.User, response_description="Client's email updated")
+def update_client_email(
+    *,
+    client_id: int,
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user),
+    user_in: UserUpdate = Body(
+        ...,
+        example={
+            "email": ""
+        }
+    ),
+) -> dict:
+    
+    """
+    Updates client's email
+    """
+
+    if current_user.privilege != 3:
+        raise authorization_exception
+    
+    # Si el id no coincide
+    if current_user.id != client_id:
+        raise authorization_exception
+    
+    client = crud.user.get(db, id=client_id)
+
+    if client is None:
+        raise HTTPException(status_code=404, detail="Client not found")
+
+    client = crud.user.update(db, db_obj=client, obj_in=user_in)
+
+    return client
