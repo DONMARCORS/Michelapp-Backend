@@ -67,6 +67,7 @@ def create_cliente(
             "last_name": "Hernandez",
             "email": "hdisra318@ciencias.unam.mx",
             "birthday": "2023-05-15",
+            "address": "CDMX",
             "privilege": 3,
             "password": ""
         }
@@ -150,7 +151,7 @@ def delete_client(
 
 
 # Caso de uso: Actualizar la cuenta del cliente (Contrasena)
-@router.put("/{client_id}/{client_old_pwd}", status_code=200, response_model=schemas.User, response_description="Client's password updated")
+@router.put("/password/{client_id}/{client_old_pwd}", status_code=200, response_model=schemas.User, response_description="Client's password updated")
 def update_client_pwd(
     *,
     client_id: int,
@@ -190,7 +191,7 @@ def update_client_pwd(
 
 
 # Caso de uso: Actualizar la cuenta del cliente (Correo)
-@router.put("/{client_id}", status_code=200, response_model=schemas.User, response_description="Client's email updated")
+@router.put("/email/{client_id}", status_code=200, response_model=schemas.User, response_description="Client's email updated")
 def update_client_email(
     *,
     client_id: int,
@@ -206,6 +207,43 @@ def update_client_email(
     
     """
     Updates client's email
+    """
+
+    if current_user.privilege != 3:
+        raise authorization_exception
+    
+    # Si el id no coincide
+    if current_user.id != client_id:
+        raise authorization_exception
+    
+    client = crud.user.get(db, id=client_id)
+
+    if client is None:
+        raise HTTPException(status_code=404, detail="Client not found")
+
+    client = crud.user.update(db, db_obj=client, obj_in=user_in)
+
+    return client
+
+
+
+# Caso de uso: Actualizar la cuenta del cliente (Direccion)
+@router.put("/address/{client_id}", status_code=200, response_model=schemas.User, response_description="Client's address updated")
+def update_client_address(
+    *,
+    client_id: int,
+    db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user),
+    user_in: UserUpdate = Body(
+        ...,
+        example={
+            "address": ""
+        }
+    ),
+) -> dict:
+    
+    """
+    Updates client's address
     """
 
     if current_user.privilege != 3:
