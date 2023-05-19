@@ -1,0 +1,68 @@
+# This is dummy data for local, not for production obviously
+from datetime import date
+
+CLIENTS = [
+    {
+        "id": 1,
+        "first_name": "Juan",
+        "last_name": "Perez",
+        "email": "cliente1@email.com",
+        "password": "cliente1",
+        "birthday": date(1990, 1, 1),
+        "privilege": 3,
+    },
+    {
+        "id": 2,
+        "first_name": "Pedro",
+        "last_name": "Hernandez",
+        "email": "pedo_hdz@email.com",
+        "password": "cliente2",
+        "birthday": date(1990, 1, 1),
+        "privilege": 3,
+    },
+    {
+        "id": 3,
+        "first_name": "Pablo",
+        "last_name": "Lopez",
+        "email": "pablo_lopez@email.com",
+        "password": "cliente3",
+        "birthday": date(1990, 1, 1),
+        "privilege": 3,
+    },
+    {
+        "id": 4,
+        "first_name": "Sarah",
+        "last_name": "Connor",
+        "email": "sarah-connor@email.com",
+        "password": "cliente4",
+        "birthday": date(1990, 1, 1),
+        "privilege": 3,
+    },
+    {
+        "id": 5,
+        "first_name": "John",
+        "last_name": "Connor",
+        "email": "john-connor@email.com",
+        "password": "cliente5",
+        "birthday": date(1990, 1, 1),
+        "privilege": 3,
+    },
+    {
+        "id": 6,
+        "first_name": "Alice",
+        "last_name": "Doel",
+        "email": "doleAlice@email.com",
+        "password": "cliente6",
+        "birthday": date(1990, 1, 1),
+        "privilege": 3,
+    },
+    {
+        "id": 7,
+        "first_name": "Bob",
+        "last_name": "Doel",
+        "email": "BobDow@email.com",
+        "password": "cliente7",
+        "birthday": date(1990, 1, 1),
+        "privilege": 3,
+    },
+]

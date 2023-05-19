@@ -46,3 +46,8 @@ class User(UserInDBBase):
 # Admin can search users
 class UserSearchResults(BaseModel):
     results: Sequence[User]
+
+
+# In orders we only need the email of owner
+class UserEmail(BaseModel):
+    email: EmailStr

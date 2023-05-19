@@ -10,6 +10,7 @@ class Product(Base):
     quantity = Column(Integer, nullable=False)
     price = Column(Integer, nullable=False)
     description = Column(String(256), nullable=False)
+    
     order_items = relationship(
         "OrderItem",
         cascade="all,delete-orphan",

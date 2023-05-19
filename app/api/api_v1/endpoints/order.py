@@ -42,7 +42,7 @@ def get_all_orders(
     results = crud.order.get_multi(db=db)
     if not results:
         return {"results": list()}
-    logger.debug(results[0].owner_id)
+
     return {"results": list(results)}
 
 
