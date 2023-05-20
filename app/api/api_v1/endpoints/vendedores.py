@@ -11,7 +11,8 @@ from app.api import deps
 from app.schemas.user import (
     User,
     UserSearchResults,
-    UserUpdate
+    UserUpdate,
+    UserCreate
 )
 
 router = APIRouter()
@@ -71,4 +72,15 @@ def update_vendedor(
 
     return user
 
+# get, post , put , delete
+@router.put("/", status_code=200, response_model=User)
+def create_vendedor(
+    *,
+    user_in: UserUpdate,
+    current_user: User = Depends(deps.get_current_user),
+    db: Session = Depends(deps.get_db)):
 
+    if current_user.privilege != 1:
+        raise authorization_exception
+    user = crud.user.get(db=db, id= current_user.id)
+    return user

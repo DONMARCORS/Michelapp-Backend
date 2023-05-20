@@ -10,6 +10,7 @@ class User(Base):
     last_name = Column(String(256), nullable=True)
     email = Column(String(256), index=True, nullable=False)
     birthday = Column(Date, nullable=False)
+    address = Column(String(256), index=True, nullable=True)
     privilege = Column(Integer, default=False, nullable=False) # 1: ADMIN, 2: VENDEDOR, 3: CLIENTE
     orders = relationship(
         "Order",
