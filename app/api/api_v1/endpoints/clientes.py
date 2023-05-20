@@ -190,9 +190,9 @@ def update_client_pwd(
     return client
 
 
-# Caso de uso: Actualizar la cuenta del cliente (Correo)
-@router.put("/email/{client_id}", status_code=200, response_model=schemas.User, response_description="Client's email updated")
-def update_client_email(
+# Caso de uso: Actualizar la cuenta del cliente (Correo o direccion)
+@router.put("/email/{client_id}", status_code=200, response_model=schemas.User, response_description="Client updated")
+def update_client_email_address(
     *,
     client_id: int,
     db: Session = Depends(deps.get_db),
@@ -200,50 +200,14 @@ def update_client_email(
     user_in: UserUpdate = Body(
         ...,
         example={
-            "email": ""
-        }
-    ),
-) -> dict:
-    
-    """
-    Updates client's email
-    """
-
-    if current_user.privilege != 3:
-        raise authorization_exception
-    
-    # Si el id no coincide
-    if current_user.id != client_id:
-        raise authorization_exception
-    
-    client = crud.user.get(db, id=client_id)
-
-    if client is None:
-        raise HTTPException(status_code=404, detail="Client not found")
-
-    client = crud.user.update(db, db_obj=client, obj_in=user_in)
-
-    return client
-
-
-
-# Caso de uso: Actualizar la cuenta del cliente (Direccion)
-@router.put("/address/{client_id}", status_code=200, response_model=schemas.User, response_description="Client's address updated")
-def update_client_address(
-    *,
-    client_id: int,
-    db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.get_current_user),
-    user_in: UserUpdate = Body(
-        ...,
-        example={
+            "email": "",
             "address": ""
         }
     ),
 ) -> dict:
     
     """
-    Updates client's address
+    Updates client's email or client's address
     """
 
     if current_user.privilege != 3:
@@ -253,6 +217,11 @@ def update_client_address(
     if current_user.id != client_id:
         raise authorization_exception
     
+    # Checando que no se quiera actualizar otro campo
+    if user_in.first_name != None or user_in.last_name != None or user_in.birthday != None or user_in.password != None or user_in.privilege != None:
+        raise HTTPException(status_code=400, detail="Update not possible")
+
+    
     client = crud.user.get(db, id=client_id)
 
     if client is None:
@@ -261,3 +230,4 @@ def update_client_address(
     client = crud.user.update(db, db_obj=client, obj_in=user_in)
 
     return client
+
