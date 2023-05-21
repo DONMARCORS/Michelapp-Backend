@@ -24,6 +24,7 @@ authorization_exception = HTTPException(
         detail="Not authorized to perform this action",
     )
 
+# Caso de uso ver vendedores (administrador) (Isaías Castrejón)
 @router.get("/", status_code=200, response_model=UserSearchResults)
 def get_vendedores(
     *,
@@ -48,7 +49,7 @@ def get_vendedores(
     
     return {"results": vendors}
 
-
+# Caso de uso actualizar vendedor (administrador) (Isaías Castrejón)
 @router.put("/{user_id}", status_code=200, response_model=User)
 def update_vendedor(
     *,
@@ -74,7 +75,7 @@ def update_vendedor(
 
     return user
 
-# get, post , put , delete
+# Caso de uso: agregar vendedor (administrador) (Isaías Castrejón)
 @router.post("/", status_code=201, response_model=User, response_description="Vendor created")
 def create_vendedor(
     *,
@@ -107,3 +108,5 @@ def create_vendedor(
     # Creamos al vendedor
     vendor = crud.user.create(db, obj_in=user_in)
     return vendor
+
+#Caso de uso: eliminar vendedor (administrador) (Isaías Castrejón)
