@@ -50,10 +50,10 @@ def get_vendedores(
     return {"results": vendors}
 
 # Caso de uso actualizar vendedor (administrador) (Isaías Castrejón)
-@router.put("/{user_id}", status_code=200, response_model=User)
+@router.put("/{vendor_id}", status_code=200, response_model=User)
 def update_vendedor(
     *,
-    user_id: int,
+    vendor_id: int,
     db: Session = Depends(deps.get_db),
     current_user: User = Depends(deps.get_current_user),
     user_in: UserUpdate,
@@ -66,7 +66,7 @@ def update_vendedor(
     if current_user.privilege != 1:
         raise authorization_exception
 
-    user = crud.user.get(db, id=user_id)
+    user = crud.user.get(db, id=vendor_id)
 
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -92,7 +92,11 @@ def create_vendedor(
         }
     ),
     current_user: User = Depends(deps.get_current_user),
-    db: Session = Depends(deps.get_db)) -> User:
+    db: Session = Depends(deps.get_db)
+) -> User:
+    """
+    Create a vendor
+    """
 
     # Checamos si el usuario actual es administrador.
     if current_user.privilege != 1:
@@ -110,3 +114,26 @@ def create_vendedor(
     return vendor
 
 #Caso de uso: eliminar vendedor (administrador) (Isaías Castrejón)
+@router.delete("/{vendor_id}", status_code=204, response_description="Vendor deleted")
+def delete_vendor(
+    *,
+    db: Session = Depends(deps.get_db),
+    vendor_id = int,
+    current_user: User = Depends(deps.get_current_user)
+) -> None:
+    """
+    Delete a vendor
+    """
+
+    if current_user.privilege != 1:
+        raise authorization_exception
+    
+    found = crud.user.get(db, id=vendor_id)
+
+    if not found:
+        raise HTTPException(status_code=404, detail="Vendor not found.")
+    
+    if found.privilege != 2:
+        raise HTTPException(status_code=400, detail="User is not a vendor.")
+    
+    crud.user.remove(db, id=vendor_id)
