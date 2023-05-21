@@ -1,8 +1,9 @@
 # WARNING: This is not authentication, 
 # this is for admin functionalities like 
 # searching users, creating vendors or displaying users in a table.
+import logging
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Body
 
 from sqlalchemy.orm import Session
 from app import crud
@@ -15,6 +16,7 @@ from app.schemas.user import (
     UserCreate
 )
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 authorization_exception = HTTPException(
@@ -73,14 +75,35 @@ def update_vendedor(
     return user
 
 # get, post , put , delete
-@router.put("/", status_code=200, response_model=User)
+@router.post("/", status_code=201, response_model=User, response_description="Vendor created")
 def create_vendedor(
     *,
-    user_in: UserUpdate,
+    user_in: UserCreate = Body(
+        ...,
+        example={
+            "first_name": "Bob",
+            "last_name": "Peters",
+            "email": "bobp@mail.com",
+            "birthday": "2023-05-20",
+            "address": "CDMX",
+            "privilege": 2,
+            "password": "password"
+        }
+    ),
     current_user: User = Depends(deps.get_current_user),
-    db: Session = Depends(deps.get_db)):
+    db: Session = Depends(deps.get_db)) -> User:
 
+    # Checamos si el usuario actual es administrador.
     if current_user.privilege != 1:
         raise authorization_exception
-    user = crud.user.get(db=db, id= current_user.id)
-    return user
+    logger.info("Creating vendor")
+    # Checamos que el privilegio de el usuario por crear sea 2 (vendedor)
+    if user_in.privilege != 2:
+        raise HTTPException(status_code=400, detail="Cannot create vendor with privilege other than 2.")
+    # Checamos que el correo no esté en uso
+    email = crud.user.get_by_email(db, email=user_in.email)
+    if email:
+        raise HTTPException(status_code=400, detail="Email already in use.")
+    # Creamos al vendedor
+    vendor = crud.user.create(db, obj_in=user_in)
+    return vendor
