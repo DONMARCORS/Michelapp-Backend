@@ -120,7 +120,7 @@ def delete_vendor(
     db: Session = Depends(deps.get_db),
     vendor_id = int,
     current_user: User = Depends(deps.get_current_user)
-) -> None:
+) -> dict:
     """
     Delete a vendor
     """
@@ -137,3 +137,6 @@ def delete_vendor(
         raise HTTPException(status_code=400, detail="User is not a vendor.")
     
     crud.user.remove(db, id=vendor_id)
+
+    #success message
+    return {"message": "Vendor deleted."}

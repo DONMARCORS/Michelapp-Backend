@@ -145,9 +145,10 @@ def delete_client(
     if not verify_password(client_pwd, client.hashed_password):
         raise HTTPException(status_code=400, detail="Incorrect password")
 
-    client = crud.user.remove(db=db, id=client_id)
+    crud.user.remove(db=db, id=client_id)
 
-    return client
+    # success message
+    return {"message": "Client deleted"}
 
 
 # Caso de uso: Actualizar la cuenta del cliente (Contrasena)

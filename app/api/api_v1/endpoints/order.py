@@ -182,5 +182,15 @@ def delete_client_order(
             status_code=404,
             detail="Order not found",
         )
-    order = crud.order.remove(db=db, id=order_id)
-    return order
+    
+    # Update the stock for each item in the order
+    for item in order.order_items:
+        product = crud.product.get(db=db, id=item.product_id)
+        product.quantity += item.quantity
+        product_in = ProductUpdate(quantity=product.quantity)
+        crud.product.update(db=db, db_obj=product, obj_in=product_in)
+
+    crud.order.remove(db=db, id=order_id)
+
+    # Success message
+    return {"message": "Order deleted successfully"}
