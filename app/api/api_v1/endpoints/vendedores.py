@@ -114,7 +114,7 @@ def create_vendedor(
     return vendor
 
 #Caso de uso: eliminar vendedor (administrador) (Isaías Castrejón)
-@router.delete("/{vendor_id}", status_code=204, response_description="Vendor deleted")
+@router.delete("/{vendor_id}", status_code=200, response_description="Vendor deleted")
 def delete_vendor(
     *,
     db: Session = Depends(deps.get_db),
