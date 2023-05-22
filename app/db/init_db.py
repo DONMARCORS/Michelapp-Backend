@@ -65,6 +65,24 @@ PRODUCTS = [
 
 ]
 
+REPORTS = [
+    {
+        "id": 2000,
+        "notas": "realizado",
+        "owner_id":2,
+        "total": 1000,
+        "rfc": "ALALLALALALA"
+    },
+    {
+        "id": 1000,
+        "notas": "realizado",
+        "owner_id":1,
+        "total": 2000,
+        "rfc": "ALALLALALALA"
+    },
+
+]
+
 
 
 # Make sure all SQL Alchemy models are imported (app.db.base) before initializing,
@@ -170,3 +188,20 @@ def init_db(db: Session) -> None:
                 f"Email: {settings.FIRST_CLIENT} already exists in the database."
             )
         logger.debug(f"Created client {user.id}")
+    
+    for report in REPORTS:
+        if crud.report.get(db, id=report["id"]):
+            logger.warning(
+                f"The product with id {report['id']} already exists in the database. Skipping creation."
+            )
+            continue
+
+        report_in = schemas.report.ReportCreate(
+            id=report["id"],
+            notas=report["notas"],
+            total=report["total"],
+            rfc=report["rfc"],
+            owner_id=report["owner_id"],
+        )
+        crud.report.create(db, obj_in=report_in)
+
