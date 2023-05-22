@@ -15,7 +15,7 @@ CLIENTS = [
         "id": 2,
         "first_name": "Pedro",
         "last_name": "Hernandez",
-        "email": "pedo_hdz@email.com",
+        "email": "pedro_hdz@email.com",
         "password": "cliente2",
         "birthday": date(1990, 1, 1),
         "privilege": 3,
