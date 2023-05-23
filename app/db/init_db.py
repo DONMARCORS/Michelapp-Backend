@@ -12,6 +12,26 @@ from app.db.initial_data.initial_orders import ORDERS
 
 logger = logging.getLogger(__name__)
 
+
+
+REPORTS = [
+    {
+        "id": 1000,
+        "notas": "Declaracion pal SAT",
+        "owner_id":3,
+        "total": 1000,
+        "rfc": "ALALLALALALAB"
+    },
+    {
+        "id": 2000,
+        "notas": "Lavaremos dinero con esta",
+        "owner_id":3,
+        "total": 2000,
+        "rfc": "BCBCBCBCBCBCB"
+    },
+
+]
+
 # Make sure all SQL Alchemy models are imported (app.db.base) before initializing,
 # otherwise Alembic might fail to initialize realtionships property
 # for more details see:https://github.com/tiangolo/full-stack-fastapi-postgresql/issues/28
@@ -94,7 +114,24 @@ def init_db(db: Session) -> None:
                     order_items=order["order_items"],
                 )
                 crud.order.create(db=db, order_in=order_in)
+    if REPORTS:
+        for report in REPORTS:
+          if crud.report.get(db, id=report["id"]):
+              logger.warning(
+                  f"The product with id {report['id']} already exists in the database. Skipping creation."
+              )
+              continue
+
+          report_in = schemas.report.ReportCreate(
+              id=report["id"],
+              notas=report["notas"],
+              total=report["total"],
+              rfc=report["rfc"],
+              owner_id=user.id,
+          )
+          crud.report.create(db, obj_in=report_in)
     
+
     if VENDORS:
         for vendor in VENDORS:
             user = crud.user.get_by_email(db, email= vendor["email"])
