@@ -24,6 +24,7 @@ logger = logging.getLogger(__name__)
 def get_all_products(
     *,
     db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user),
 ) -> dict:
     """
     Get all products, used by admin and vendedor

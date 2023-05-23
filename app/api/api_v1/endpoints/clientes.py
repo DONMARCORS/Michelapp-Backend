@@ -36,10 +36,15 @@ authorization_exception = HTTPException(
 def get_clientes(
     *,
     db: Session = Depends(deps.get_db),
+    current_user: User = Depends(deps.get_current_user),
 ) -> dict:
     """
     Get all clients
     """
+
+    if current_user.privilege != 1:
+        raise authorization_exception
+
 
     results = crud.user.get_multi(db=db)
     if not results:
@@ -162,7 +167,7 @@ def update_client_pwd(
     user_in: UserUpdate = Body(
         ...,
         example={
-            "password": ""
+            "password": "example123"
         }
     ),
 ) -> dict:
