@@ -35,16 +35,46 @@ def get_all_products(
 
     return {"results": results}
 
-#Este endpoint es para editar un producto, recibe un id y un objeto de tipo ProductUpdate
+
 @router.put("/{product_id}", status_code=200, response_model=ProductUpdate)
 def update_product(
     product_id: int,
     product: ProductUpdate,
     db: Session = Depends(deps.get_db),
-    current_user: User = Depends(deps.get_current_active_user),
 ) -> dict:
     """
     Update a product
+    """
+    if current_user.privilege == "admin":
+        return {"product": product}
+    
+
+@router.delete("/{product_id}", status_code=200, response_model=ProductUpdate)
+def delete_product(
+    product_id: int,
+    product: ProductUpdate,
+    db: Session = Depends(deps.get_db),
+) -> dict:
+    """
+    Delete a product
+    """
+    if current_user.privilege == "admin":
+        return {"product": product}
+    
+    raise HTTPException(
+        status_code=404,
+        detail=f"Product {item.product_id} not found",
+    )
+    
+
+@router.post("/", status_code=201, response_model=ProductUpdate)
+def create_product(
+    product_id: int,
+    product: ProductUpdate,
+    db: Session = Depends(deps.get_db),
+) -> dict:
+    """
+    Create a product
     """
     if current_user.privilege == "admin":
         return {"product": product}
