@@ -27,8 +27,7 @@ class OrderItemInDBBase(OrderItemBase):
 
 # Additional properties to return via API
 class OrderItem(OrderItemInDBBase):
-    product: Product
-
+    ...
 
 # Additional preoperties stored in DB but not returned by APi
 class OrderItemInDB(OrderItemInDBBase):

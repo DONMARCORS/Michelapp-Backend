@@ -1,8 +1,9 @@
 # WARNING: This is not authentication, 
 # this is for admin functionalities like 
 # searching users, creating vendors or displaying users in a table.
+import logging
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Body
 
 from sqlalchemy.orm import Session
 from app import crud
@@ -11,9 +12,11 @@ from app.api import deps
 from app.schemas.user import (
     User,
     UserSearchResults,
-    UserUpdate
+    UserUpdate,
+    UserCreate
 )
 
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 authorization_exception = HTTPException(
@@ -21,6 +24,7 @@ authorization_exception = HTTPException(
         detail="Not authorized to perform this action",
     )
 
+# Caso de uso ver vendedores (administrador) (Isaías Castrejón)
 @router.get("/", status_code=200, response_model=UserSearchResults)
 def get_vendedores(
     *,
@@ -45,11 +49,11 @@ def get_vendedores(
     
     return {"results": vendors}
 
-
-@router.put("/{user_id}", status_code=200, response_model=User)
+# Caso de uso actualizar vendedor (administrador) (Isaías Castrejón)
+@router.put("/{vendor_id}", status_code=200, response_model=User)
 def update_vendedor(
     *,
-    user_id: int,
+    vendor_id: int,
     db: Session = Depends(deps.get_db),
     current_user: User = Depends(deps.get_current_user),
     user_in: UserUpdate,
@@ -62,7 +66,7 @@ def update_vendedor(
     if current_user.privilege != 1:
         raise authorization_exception
 
-    user = crud.user.get(db, id=user_id)
+    user = crud.user.get(db, id=vendor_id)
 
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
@@ -71,4 +75,68 @@ def update_vendedor(
 
     return user
 
+# Caso de uso: agregar vendedor (administrador) (Isaías Castrejón)
+@router.post("/", status_code=201, response_model=User, response_description="Vendor created")
+def create_vendedor(
+    *,
+    user_in: UserCreate = Body(
+        ...,
+        example={
+            "first_name": "Bob",
+            "last_name": "Peters",
+            "email": "bobp@mail.com",
+            "birthday": "2023-05-20",
+            "address": "CDMX",
+            "privilege": 2,
+            "password": "password"
+        }
+    ),
+    current_user: User = Depends(deps.get_current_user),
+    db: Session = Depends(deps.get_db)
+) -> User:
+    """
+    Create a vendor
+    """
 
+    # Checamos si el usuario actual es administrador.
+    if current_user.privilege != 1:
+        raise authorization_exception
+    logger.info("Creating vendor")
+    # Checamos que el privilegio de el usuario por crear sea 2 (vendedor)
+    if user_in.privilege != 2:
+        raise HTTPException(status_code=400, detail="Cannot create vendor with privilege other than 2.")
+    # Checamos que el correo no esté en uso
+    email = crud.user.get_by_email(db, email=user_in.email)
+    if email:
+        raise HTTPException(status_code=400, detail="Email already in use.")
+    # Creamos al vendedor
+    vendor = crud.user.create(db, obj_in=user_in)
+    return vendor
+
+#Caso de uso: eliminar vendedor (administrador) (Isaías Castrejón)
+@router.delete("/{vendor_id}", status_code=200, response_description="Vendor deleted")
+def delete_vendor(
+    *,
+    db: Session = Depends(deps.get_db),
+    vendor_id = int,
+    current_user: User = Depends(deps.get_current_user)
+) -> dict:
+    """
+    Delete a vendor
+    """
+
+    if current_user.privilege != 1:
+        raise authorization_exception
+    
+    found = crud.user.get(db, id=vendor_id)
+
+    if not found:
+        raise HTTPException(status_code=404, detail="Vendor not found.")
+    
+    if found.privilege != 2:
+        raise HTTPException(status_code=400, detail="User is not a vendor.")
+    
+    crud.user.remove(db, id=vendor_id)
+
+    #success message
+    return {"message": "Vendor deleted."}

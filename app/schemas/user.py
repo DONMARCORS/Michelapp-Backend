@@ -9,6 +9,7 @@ class UserBase(BaseModel):
     last_name: Optional[str]
     email: Optional[EmailStr] = None
     birthday: Optional[date] = None
+    address: Optional[str]
     privilege: Optional[conint(ge=1, le=3)]# 1: ADMIN, 2: VENDEDOR, 3: CLIENTE
 
 # Properties to recieve via API on creation
@@ -46,3 +47,8 @@ class User(UserInDBBase):
 # Admin can search users
 class UserSearchResults(BaseModel):
     results: Sequence[User]
+
+
+# In orders we only need the email of owner
+class UserEmail(BaseModel):
+    email: EmailStr
