@@ -67,18 +67,18 @@ PRODUCTS = [
 
 REPORTS = [
     {
-        "id": 2000,
-        "notas": "realizado",
-        "owner_id":2,
+        "id": 1000,
+        "notas": "Declaracion pal SAT",
+        "owner_id":3,
         "total": 1000,
-        "rfc": "ALALLALALALA"
+        "rfc": "ALALLALALALAB"
     },
     {
-        "id": 1000,
-        "notas": "realizado",
-        "owner_id":1,
+        "id": 2000,
+        "notas": "Lavaremos dinero con esta",
+        "owner_id":3,
         "total": 2000,
-        "rfc": "ALALLALALALA"
+        "rfc": "BCBCBCBCBCBCB"
     },
 
 ]
@@ -201,7 +201,7 @@ def init_db(db: Session) -> None:
             notas=report["notas"],
             total=report["total"],
             rfc=report["rfc"],
-            owner_id=report["owner_id"],
+            owner_id=user.id,
         )
         crud.report.create(db, obj_in=report_in)
 

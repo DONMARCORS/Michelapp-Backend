@@ -12,6 +12,6 @@ class Report(Base):
     owner_id = Column(Integer, ForeignKey("user.id"), nullable=False, unique=False)
     owner = relationship(
         "User", 
-        #back_populates="orders",
+        #back_populates="report",
     )
     
