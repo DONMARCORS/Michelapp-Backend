@@ -36,20 +36,6 @@ def get_all_products(
 
     return {"results": results}
 
-
-@router.put("/{product_id}", status_code=200, response_model=ProductUpdate)
-def update_product(
-    product_id: int,
-    product: ProductUpdate,
-    db: Session = Depends(deps.get_db),
-) -> dict:
-    """
-    Update a product
-    """
-    if current_user.privilege == "admin":
-        return {"product": product}
-    
-    
 #Caso de uso: Crear un producto nuevo en la base de datos
 @router.post("/", status_code=201, response_model="Product Created")
 def create_product(
@@ -68,9 +54,9 @@ def create_product(
         }
 ) -> dict:
     """
-    Create a product. Only client cannot create products
+    Create a product. Only vendedor can create products
     """
-    if current_user.privilege != 3:
+    if current_user.privilege == 2:
         return {"product": product}
     
     if current_user.privilege == "vendedor":
@@ -86,7 +72,25 @@ def delete_product(
     db: Session = Depends(deps.get_db),
 ) -> dict:
     """
-    Delete a product. Only client cannot delete products
+    Delete a product. Only vendedor can delete products
+    """
+    if current_user.privilege == 2:
+        return {"product": product}
+    
+    raise HTTPException(
+        status_code=404,
+        detail=f"Product {item.product_id} not found",
+    )|
+    
+#Caso de uso: Actualizar un producto de la base de datos
+@router.put("/{product_id}", status_code=200, response_model=ProductUpdate)
+def update_product(
+    product_id: int,
+    product: ProductUpdate,
+    db: Session = Depends(deps.get_db),
+) -> dict:
+    """
+    Update a product. Only client cannot update products
     """
     if current_user.privilege == "admin":
         return {"product": product}
@@ -94,4 +98,4 @@ def delete_product(
     raise HTTPException(
         status_code=404,
         detail=f"Product {item.product_id} not found",
-    )|
+    )
