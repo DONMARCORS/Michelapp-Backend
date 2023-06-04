@@ -20,21 +20,21 @@ router = APIRouter()
 logger = logging.getLogger(__name__)
 
 
-@router.get("/all", status_code=200, response_model=ProductSearchResults)
-def get_all_products(
+#Caso de uso: Obtener todos los productos de la base de datos
+@router.get("/", status_code=200, response_model=ProductSearchResults)
+def get_products(
     *,
     db: Session = Depends(deps.get_db),
     current_user: User = Depends(deps.get_current_user),
 ) -> dict:
     """
-    Get all products, used by admin and vendedor
+    Get all products
     """
-
     results = crud.product.get_multi(db=db)
     if not results:
         return {"results": []}
-
-    return {"results": results}
+    
+    return {"results": list(results)}
 
 #Caso de uso: Crear un producto nuevo en la base de datos
 @router.post("/", status_code=201, response_model="Product Created")
