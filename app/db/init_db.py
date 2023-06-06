@@ -45,7 +45,7 @@ def init_db(db: Session) -> None:
         user = crud.user.get_by_email(db, email= settings.FIRST_SUPERUSER)
         if not user:
             user_in = schemas.UserCreate(
-                first_name="INITIAL super firstname", 
+                first_name="ADMINISTRADOR", 
                 email=settings.FIRST_SUPERUSER,
                 password=settings.FIRST_SUPERUSER_PASSWORD,
                 #birthday is a Date object

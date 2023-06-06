@@ -43,7 +43,7 @@ def get_clientes(
     Get all clients
     """
 
-    if current_user.privilege != 1:
+    if current_user.privilege != 1 and current_user.privilege != 2:
         raise authorization_exception
 
 
