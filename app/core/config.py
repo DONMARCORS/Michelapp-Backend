@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     API_V1_STR: str = os.getenv("API_V1_STR")
     JWT_SECRET: str = os.getenv("JWT_SECRET")
     ALGORITHM: str = os.getenv("ALGORITHM")
+    SYSTEM_EMAIL: str = os.getenv("sender_email_address")
+    SYSTEM_EMAIL_PASSWORD: str = os.getenv("password_aplicacion")
+
 
 
     #60 minutes * 24 hours * 8 days = 8 days

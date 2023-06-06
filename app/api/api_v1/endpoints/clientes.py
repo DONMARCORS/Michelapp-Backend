@@ -10,6 +10,7 @@ import yagmail
 import random as rd
 import string
 from app.core.security import verify_password
+from app.core.config import settings
 
 from app import crud
 from app.api import deps
@@ -92,9 +93,8 @@ def create_cliente(
     
     # Creando password y envio a correo del cliente (GMAIL)
     email_subject = "Contraseña generada por Michelapp"
-    sender_email_address = "michelappingsoft@gmail.com" # Correo para el sistema
-    email_password = "Ihebd837" # Contrasena del correo del sistema
-    password_aplicacion = 'eycooxfyrydhszmc' # Contrasena para el envio de correos GMAIL
+    sender_email_address = settings.SYSTEM_EMAIL
+    password_aplicacion = settings.SYSTEM_EMAIL_PASSWORD
 
     # Generando contrasena
     pwd = ""
